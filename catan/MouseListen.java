@@ -17,16 +17,15 @@ public class MouseListen extends MouseAdapter {
     {
         // note: next version is gonna be less messy
         Player playerClicked = currGame.currentPlayer;
+        // means it is still first turn
         if (playerClicked.thingsPlaced < 4)
         {
             if (playerClicked.canSettle) {
                 int settleClicked = currGame.findIndxOfSettle(e.getX(), e.getY());
-
+                // check if he clicked on a place that can have a settlement, also check if no one has placed there(since it is first turn)
                 if (settleClicked != -1 && currGame.settlements[settleClicked].getPlayerId() == 0 ) {
-                    // check if he clicked on a place that can have a settlement. check if no one has placed there(since it is first turn)
-
                     if (placeSettlement(e.getX(), e.getY(), playerClicked, 0)) {
-                        playerClicked.addVictoryPoint();
+                        playerClicked.addVictoryPoint(); 
                         playerClicked.incThingsPlaced();
                         playerClicked.setCanSettle(false);
                         playerClicked.setCanRoad(true);
@@ -36,7 +35,7 @@ public class MouseListen extends MouseAdapter {
             }
             else {
                 int[] cords = currGame.determineRoadPos(e.getX(), e.getY());
-                System.out.println("is road taken: " + currGame.isRoadTaken(cords));
+                // if clicked on a road, the road isnt taken and is obeying placement rules:
                 if (cords != null && !currGame.isRoadTaken(cords) && currGame.isRoadConnecting(cords[0])) {
                     if (placeRoad(cords, playerClicked)) {
                         playerClicked.setCanSettle(true);
@@ -44,6 +43,7 @@ public class MouseListen extends MouseAdapter {
                         if (playerClicked.getThingsPlaced() == 4) {
                             playerClicked.setFirstTurn(false);
                         }
+                        // give the turn to the other player
                         currGame.switchPlayers();
                     }
                 }
@@ -57,7 +57,7 @@ public class MouseListen extends MouseAdapter {
             if (playerClicked.rolled) {
                 int indxOfSettle = currGame.findIndxOfSettle(e.getX(), e.getY());
                 if (indxOfSettle != -1) { // clicked on a settlement
-                    // 3 cases: empty, his own, enemy:
+                    // 3 cases for settlement: empty, his own, enemy:
                     int pid = currGame.settlements[indxOfSettle].getPlayerId();
                     int level = currGame.settlements[indxOfSettle].getLevel();
                     if (pid != 0 && pid != playerClicked.getId()) {
@@ -66,7 +66,7 @@ public class MouseListen extends MouseAdapter {
                     else
                     {
                         if (currGame.isSettleConnecting(indxOfSettle)) {
-
+                            // place settlement if possible
                             determineSettleConditionAndPlace(playerClicked, level, e.getX(), e.getY());
                         }
                         else
@@ -106,13 +106,14 @@ public class MouseListen extends MouseAdapter {
                 currGame.setDisplayMessage("must roll first");
             }
         }
+        // check if the player won
         currGame.checkWin();
     }
 
      public boolean placeRoad(int[] foundRoad, Player p)
      {
-
-            Road r = currGame.roads[foundRoad[0]];
+             // place both lines of roads:
+             Road r = currGame.roads[foundRoad[0]];
              r.setOpaque(false);
              r.setLayout(null);
              r.setBounds(0, 0, 1000, 1000);
@@ -120,22 +121,22 @@ public class MouseListen extends MouseAdapter {
              r.setColor(p.getColor());
              r.setPlaced(true);
              Road other = currGame.roads[foundRoad[1]];
-              other.setPlayerId(p.getId());
-                 other.setOpaque(false);
-                 other.setLayout(null);
-                 other.setBounds(0, 0, 1000, 1000);
-                 other.setColor(p.getColor());
-                 other.setPlaced(true);
-
-                 panel.add(other);
-                 panel.add(r);
-                 panel.revalidate();
-                 panel.repaint();
-                 if (!p.isFirstTurn)
+             other.setPlayerId(p.getId());
+             other.setOpaque(false);
+             other.setLayout(null);
+             other.setBounds(0, 0, 1000, 1000);
+             other.setColor(p.getColor());
+             other.setPlaced(true);
+             // add both roads to panel
+             panel.add(other);
+             panel.add(r);
+             panel.revalidate();
+             panel.repaint();
+             if (!p.isFirstTurn)
                  {
                      p.subtractMats("road");
                  }
-                 return true;
+             return true;
 
      }
     public void determineSettleConditionAndPlace(Player playerClicked, int level, int x, int y)
@@ -145,6 +146,7 @@ public class MouseListen extends MouseAdapter {
             // it is a fresh place
             case (0):
                 if (playerClicked.hasMatsFor("settle")) {
+                    // if has materials, place settlement
                     placeSettlement(x, y, playerClicked, level);
                     playerClicked.addVictoryPoint();
                     playerClicked.subtractMats("settle");
@@ -155,7 +157,7 @@ public class MouseListen extends MouseAdapter {
                     currGame.setDisplayMessage("dont have resources");
                 }
                 break;
-            case (1):
+            case (1): // it is a normal settlement
                 if (playerClicked.hasMatsFor("city")) {
                     playerClicked.addVictoryPoint();
                     placeSettlement(x, y, playerClicked, level+1);
@@ -168,6 +170,7 @@ public class MouseListen extends MouseAdapter {
                 }
                 break;
             case(2):
+                // it is a city already
                 currGame.setDisplayMessage("a city is there");
                 break;
         }
@@ -177,14 +180,15 @@ public class MouseListen extends MouseAdapter {
             int settlementX = currGame.settlements[foundSettle].x;
             int settlementY = currGame.settlements[foundSettle].y;
             Point settlementPos = new Point(settlementX, settlementY);
+            // set the nearby resources of settlement
+            currGame.settlements[foundSettle].setNearResources(currGame.determineNearSources(settlementPos));
+
             SettleComponent jp = new SettleComponent(p.getColor(), level);
             jp.setLayout(null);
             jp.setBackground(p.getColor());
 
         if (level == 0) {
-                System.out.println("new settlement");
-                currGame.settlements[foundSettle].setNearResources(currGame.determineNearSources(settlementPos));
-                System.out.println("near sources: " + currGame.settlements[foundSettle].getNearResources());
+                // new settlement
                 /////////////////////////////
                 currGame.settlements[foundSettle].setPlayerId(p.getId());
                 currGame.settlements[foundSettle].setLevel(1);
@@ -195,9 +199,7 @@ public class MouseListen extends MouseAdapter {
             }
             else
             {
-                System.out.println("new city");
-
-                currGame.settlements[foundSettle].setNearResources(currGame.determineNearSources(settlementPos));
+                // new city
                 currGame.settlements[foundSettle].setPlayerId(p.getId());
                 currGame.settlements[foundSettle].setLevel(level);
                 jp.setBounds(settlementX - 8, settlementY - 8, 30, 30);
