@@ -16,6 +16,7 @@ public class GameSetup extends JFrame{
         this.setVisible(true);
 
     }
+    // setup a screen with a winning message
     public GameSetup(String winMsg)
     {
         // setting frame
@@ -24,7 +25,7 @@ public class GameSetup extends JFrame{
         this.setBackground(new Color(30, 117, 157));
         this.setSize(500, 500);
         this.setLayout(null);
-
+        // add winning message
         JLabel jl = new JLabel(winMsg);
         jl.setLayout(null);
         jl.setBounds(200,200,100,30);
