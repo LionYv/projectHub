@@ -17,13 +17,13 @@ public class SettleComponent extends JPanel {
         //super.paintComponent(g);
         g.setColor(c);
         if (level == 0) {
-            g.fillOval(-5, -10, 20, 20);
-            g.drawOval(-5, -10, 20, 20);
+            g.fillOval(0, 0, 23, 23);
+            g.drawOval(10, 10, 23, 23);
         }
         else
         {
-            g.fillRect(-5, -10, 20, 20);
-            g.drawRect(-5, -10, 20, 20);
+            g.fillRect(-5, -10, 30, 30);
+            g.drawRect(-5, -10, 30, 30);
         }
     }
 }
