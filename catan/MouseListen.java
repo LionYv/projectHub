@@ -158,7 +158,7 @@ public class MouseListen extends MouseAdapter {
             case (1):
                 if (playerClicked.hasMatsFor("city")) {
                     playerClicked.addVictoryPoint();
-                    placeSettlement(x, y, playerClicked, level);
+                    placeSettlement(x, y, playerClicked, level+1);
                     playerClicked.subtractMats("city");
 
                 }
@@ -195,6 +195,12 @@ public class MouseListen extends MouseAdapter {
             }
             else
             {
+                System.out.println("new city");
+
+                currGame.settlements[foundSettle].setNearResources(currGame.determineNearSources(settlementPos));
+                currGame.settlements[foundSettle].setPlayerId(p.getId());
+                currGame.settlements[foundSettle].setLevel(level);
+                jp.setBounds(settlementX - 8, settlementY - 8, 30, 30);
 
             }
             panel.add(jp);

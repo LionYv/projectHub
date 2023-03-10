@@ -5,6 +5,7 @@ public class GameSetup extends JFrame{
     MyPanel panel;
 
     public  GameSetup() {
+
         panel = new MyPanel(this);
         // setting frame
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

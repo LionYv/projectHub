@@ -4,6 +4,8 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
+import static javax.swing.JColorChooser.showDialog;
+
 public class MyPanel extends JLayeredPane implements ActionListener {
     static Tile [] tileArray = new Tile[19];
     static Road [] roads = new Road[tileArray.length*6];
@@ -33,8 +35,11 @@ public class MyPanel extends JLayeredPane implements ActionListener {
              this.setBackground(new Color(90,120,90));
              addMessageDisplay();
              players = new Player[2];
-             players[0] = new Player(1,new int[6], Color.pink);
-             players[1] = new Player(2,new int[6], Color.MAGENTA);
+             players[0] = new Player(1,new int[6],null);
+             players[1] = new Player(2,new int[6], null);
+             players[0].color = JColorChooser.showDialog(new JColorChooser(), "player 0: choose a color", Color.WHITE);
+             players[1].color = JColorChooser.showDialog(new JColorChooser(), "player 1: choose a color", Color.WHITE);
+
              frameParent = parent;
              initTiles();
 
